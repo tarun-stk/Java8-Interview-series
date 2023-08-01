@@ -48,7 +48,7 @@ public class Java8Operations {
 		System.out.println(findAllDuplicateCharactersInAGivenString("java is awesome"));
 		System.out.println(findAllUniqueCharactersInAGivenString("java is awesome"));
 		System.out.println(findFirstNonRepetitiveCharacterInAGivenString("java is awesome"));
-		System.out.println(findFirstRepetitiveCharacterInAGivenString("java is awesome"));
+		System.out.println("findFirstRepetitiveCharacterInAGivenString: " + findFirstRepetitiveCharacterInAGivenString("java is awesome, & also java is amazing"));
 		System.out.println(findSecondLowestNumberInAGivenArray(new int[] {2, 5, 8, 10, 56, 7, 8, 6, 1}));
 		System.out.println(findSecondHighestNumberInAGivenArray(new int[] {2, 5, 8, 10, 56, 7, 8, 6, 1}));
 		System.out.println(findStringWithGreatestLength(new String[] {"java", "tech", "spring boot", "microservices", "amazonwebservice"}));
