@@ -1,4 +1,4 @@
-package com.java8.exercises;
+package com.java8.exercises.strings;
 
 import java.util.Map;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package com.java8.exercises;
+package com.java8.exercises.strings;
 
 public class StringJoinExample {
 
