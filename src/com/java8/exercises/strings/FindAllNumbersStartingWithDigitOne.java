@@ -12,7 +12,6 @@ public class FindAllNumbersStartingWithDigitOne {
 				.collect(Collectors.toList());
 		
 		list.stream().map(x -> x+"").filter(x -> x.startsWith("1")).forEach(System.out::println);
-
 	}
 
 }

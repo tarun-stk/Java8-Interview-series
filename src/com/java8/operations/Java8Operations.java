@@ -20,6 +20,24 @@ import com.java8.employee.Employee;
 import com.java8.insertData.InsertData;
 
 public class Java8Operations {
+
+	static List<Employee> emps1 = InsertData.loadData();
+	static List<Employee> emps;
+
+
+	static {
+		emps = new LinkedList<>();
+		emps.add(new Employee(1, 1200, 'M', 26, "Michael", "scott", "IT", Arrays.asList("9989998999", "8899889988")));
+		emps.add(new Employee(2, 2400, 'F', 32, "Mona", "Lisa", "HR", Arrays.asList("9989998999", "8899889988")));
+		emps.add(new Employee(3, 1100, 'M', 56, "Jimping", "Xi", "Support", Arrays.asList("9989998999", "8899889988")));
+		emps.add(new Employee(4, 1000, 'F', 21, "Kate", "Perry", "IT", Arrays.asList("9989998999", "8899889988")));
+		emps.add(new Employee(5, 1200, 'M', 28, "David", "Josh", "Sales", Arrays.asList("9989998999", "8899889988")));
+		emps.add(new Employee(6, 1000, 'F', 60, "Alina", "Crus", "HR", Arrays.asList("9989998999", "8899889988")));
+		emps.add(new Employee(7, 1100, 'F', 19, "Thomas", "Cook", "IT", Arrays.asList("9989998999", "8899889988")));
+		emps.add(new Employee(8, 1000, 'F', 20, "Debalina", "Apple", "Support", Arrays.asList("9989998999", "8899889988")));
+//		System.out.println(emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)))));
+	}
+
 	public static void main(String[] args) {
 		
 //		Date Time API in java-8
@@ -27,20 +45,17 @@ public class Java8Operations {
 //			java.time.LocalDate.now()
 //		2. To get current Date & Time
 //			java.time.LocalDateTime.now()
-		
-		
-		List<Employee> emps = InsertData.loadData();
 
-		System.out.println(getCountOfAllGenders(emps));
-		System.out.println(getEmployeeWithHighestSalary(emps));
+		System.out.println("getCountOfAllGenders: " + getCountOfAllGenders(emps));
+		System.out.println("getEmployeeWithHighestSalary: " + getEmployeeWithHighestSalary(emps));
 		System.out.println(getFemaleEmployeeWithHighestSalary(emps));
 		System.out.println(getAverageSalaryByGender(emps));
 		System.out.println(getAverageAgeByGender(emps));
 		System.out.println(countEmployeesWithSalaryGreaterThan100000(emps));
 		System.out.println(sumOfAllSalaries(emps));
-		System.out.println(OldestEmployee(emps));
+		System.out.println("OldestEmployee: " + OldestEmployee(emps));
 		System.out.println(employeesGroupedByDepartment(emps));
-		System.out.println(countOfEmployeesInEachDepartment(emps));
+		System.out.println("countOfEmployeesInEachDepartment : " + countOfEmployeesInEachDepartment(emps));
 		System.out.println(averageSalaryOfEachDepartment(emps));
 		System.out.println(highestSalaryInEachDepartment(emps));
 		System.out.println(findNthHighestSalary(emps, 3));
@@ -74,6 +89,8 @@ public class Java8Operations {
 	
 	private static Employee getEmployeeWithHighestSalary(List<Employee> emps) {
 		Employee emp = emps.stream().collect(Collectors.maxBy(Comparator.comparing(Employee::getSalary))).get();
+//		Employee emp = emps.stream().reduce((a, b) -> a.getSalary() > b.getSalary()? a: b).get();
+//		Employee emp = emps.stream().max((emp1, emp2) -> (int)emp1.getSalary() - (int)emp2.getSalary()).get();
 		return emp;
 	}
 	
@@ -100,12 +117,15 @@ public class Java8Operations {
 	
 	static private Employee OldestEmployee(List<Employee> emps) {
 //		return (Employee) emps.stream().sorted(Comparator.comparingInt(Employee::getAge)).limit(1);
-		return emps.stream().reduce((e1, e2) -> e2.getAge() > e1.getAge()? e2: e1).get();
+//		return emps.stream().reduce((e1, e2) -> e2.getAge() > e1.getAge()? e2: e1).get();
+		return (Employee) emps.stream().collect(Collectors.maxBy(Comparator.comparingInt(Employee::getAge))).get();
+//		return emps.stream().max((x1, x2) -> x1.getAge() - x2.getAge()).get();
 	}
 	
 	static private Map<String, List<Employee>> employeesGroupedByDepartment(List<Employee> emps){
 //		If you want only emp id/name instead of whole emp obj do this
 		Map<String, List<Integer>> map = emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.mapping(Employee::getId, Collectors.toList())));
+
 //		System.out.println(map);
 		return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment));
 	}
@@ -120,19 +140,6 @@ public class Java8Operations {
 	
 	static private Map<String, Optional<Employee>> highestSalaryInEachDepartment(List<Employee> emps){
 		return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
-	}
-	
-	static {
-		List<Employee> emps = new LinkedList<>();
-		emps.add(new Employee(1, 1200, 'M', 26, "Michael", "scott", "IT", Arrays.asList("9989998999", "8899889988")));
-		emps.add(new Employee(2, 2400, 'F', 32, "Mona", "Lisa", "HR", Arrays.asList("9989998999", "8899889988")));
-		emps.add(new Employee(3, 1100, 'M', 56, "Jimping", "Xi", "Support", Arrays.asList("9989998999", "8899889988")));
-		emps.add(new Employee(4, 1000, 'F', 21, "Kate", "Perry", "IT", Arrays.asList("9989998999", "8899889988")));
-		emps.add(new Employee(5, 1200, 'M', 28, "David", "Josh", "Sales", Arrays.asList("9989998999", "8899889988")));
-		emps.add(new Employee(6, 1000, 'F', 60, "Alina", "Crus", "HR", Arrays.asList("9989998999", "8899889988")));
-		emps.add(new Employee(7, 1100, 'F', 19, "Thomas", "Cook", "IT", Arrays.asList("9989998999", "8899889988")));
-		emps.add(new Employee(8, 1000, 'F', 20, "Debalina", "Apple", "Support", Arrays.asList("9989998999", "8899889988")));
-		System.out.println(emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)))));
 	}
 	
 	static private Entry<Double, List<String>> findNthHighestSalary(List<Employee> emps, int n){

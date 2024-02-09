@@ -16,7 +16,6 @@ public class FindFirstRepetitiveCharacterInAString {
 			.findFirst()
 			.map(x -> x.getKey())
 			.get();
-		
 		System.out.println("Ans: " + ans); //j
 	}
 

@@ -17,7 +17,6 @@ public class FindFirstNonRepetitiveCharacterInAString {
 			.findFirst()
 			.map(x -> x.getKey())
 			.get();
-		
 		System.out.println("Ans: " + ans);
 	}
 

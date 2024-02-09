@@ -1,8 +1,6 @@
 package com.java8.exercises.strings;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FindAllDuplicateCharacters {
@@ -18,7 +16,12 @@ public class FindAllDuplicateCharacters {
 			.filter(x -> x.getValue() > 1)
 			.map(x -> x.getKey())
 			.forEach(System.out::println);
-		
+
+//		Using Set
+		Set<Integer> set = new HashSet<>();
+		Set<Integer> ans = numbers.stream().filter(x -> !set.add(x)).collect(Collectors.toSet());
+		System.out.println("ans: " + ans);
+
 		String str = "Java8 is fun and amazing";
 
 		str.codePoints().mapToObj(x -> (char)x)
@@ -28,8 +31,6 @@ public class FindAllDuplicateCharacters {
 			.filter(x -> x.getValue() > 1)
 			.map(x -> x.getKey())
 			.forEach(System.out::println);
-		;
-		
 	}
 
 }
