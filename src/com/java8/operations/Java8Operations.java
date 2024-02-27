@@ -48,24 +48,24 @@ public class Java8Operations {
 
 		System.out.println("getCountOfAllGenders: " + getCountOfAllGenders(emps));
 		System.out.println("getEmployeeWithHighestSalary: " + getEmployeeWithHighestSalary(emps));
-		System.out.println(getFemaleEmployeeWithHighestSalary(emps));
-		System.out.println(getAverageSalaryByGender(emps));
-		System.out.println(getAverageAgeByGender(emps));
-		System.out.println(countEmployeesWithSalaryGreaterThan100000(emps));
+		System.out.println("getFemaleEmployeeWithHighestSalary: " + getFemaleEmployeeWithHighestSalary(emps));
+		System.out.println("getAverageSalaryByGender: " + getAverageSalaryByGender(emps));
+		System.out.println("getAverageAgeByGender: " + getAverageAgeByGender(emps));
+		System.out.println("countEmployeesWithSalaryGreaterThan100000: " + countEmployeesWithSalaryGreaterThan100000(emps));
 		System.out.println(sumOfAllSalaries(emps));
 		System.out.println("OldestEmployee: " + OldestEmployee(emps));
 		System.out.println(employeesGroupedByDepartment(emps));
 		System.out.println("countOfEmployeesInEachDepartment : " + countOfEmployeesInEachDepartment(emps));
 		System.out.println(averageSalaryOfEachDepartment(emps));
 		System.out.println(highestSalaryInEachDepartment(emps));
-		System.out.println(findNthHighestSalary(emps, 3));
+		System.out.println("findNthHighestSalary: " + findNthHighestSalary(emps, 3));
 		System.out.println(countOfEachCharacter("java is awesome"));
 		System.out.println(findAllDuplicateCharactersInAGivenString("java is awesome"));
 		System.out.println(findAllUniqueCharactersInAGivenString("java is awesome"));
 		System.out.println(findFirstNonRepetitiveCharacterInAGivenString("java is awesome"));
 		System.out.println("findFirstRepetitiveCharacterInAGivenString: " + findFirstRepetitiveCharacterInAGivenString("java is awesome, & also java is amazing"));
 		System.out.println(findSecondLowestNumberInAGivenArray(new int[] {2, 5, 8, 10, 56, 7, 8, 6, 1}));
-		System.out.println(findSecondHighestNumberInAGivenArray(new int[] {2, 5, 8, 10, 56, 7, 8, 6, 1}));
+		System.out.println("findSecondHighestNumberInAGivenArray: " + findSecondHighestNumberInAGivenArray(new int[] {2, 5, 8, 10, 56, 7, 8, 6, 1}));
 		System.out.println(findStringWithGreatestLength(new String[] {"java", "tech", "spring boot", "microservices", "amazonwebservice"}));
 		System.out.println(findAllElementsWhichStartsWith1InAnArray(new int[] {2, 5, 8, 10, 56, 7, 8, 6, 1, 101, 111, 121, 876}));
 		System.out.println(stringJoinExample(Arrays.asList("1", "2", "3", "4")));
@@ -88,10 +88,10 @@ public class Java8Operations {
 	}
 	
 	private static Employee getEmployeeWithHighestSalary(List<Employee> emps) {
-		Employee emp = emps.stream().collect(Collectors.maxBy(Comparator.comparing(Employee::getSalary))).get();
+		Optional<Employee> emp = emps.stream().collect(Collectors.maxBy(Comparator.comparing(Employee::getSalary)));
 //		Employee emp = emps.stream().reduce((a, b) -> a.getSalary() > b.getSalary()? a: b).get();
 //		Employee emp = emps.stream().max((emp1, emp2) -> (int)emp1.getSalary() - (int)emp2.getSalary()).get();
-		return emp;
+		return emp.isPresent()? emp.get(): null;
 	}
 	
 	private static Employee getFemaleEmployeeWithHighestSalary(List<Employee> emps) {
@@ -100,7 +100,8 @@ public class Java8Operations {
 	}
 	
 	static private Map<Character, Double> getAverageSalaryByGender(List<Employee> emps){
-		return emps.stream().collect(Collectors.groupingBy(Employee::getGender, Collectors.averagingDouble(Employee::getSalary)));
+//		return emps.stream().collect(Collectors.groupingBy(Employee::getGender, Collectors.averagingDouble(Employee::getSalary)));
+		return emps.stream().collect(Collectors.groupingBy(e -> e.getGender(), Collectors.averagingDouble(e -> e.getSalary())));
 	}
 	
 	static private Map<Character, Double> getAverageAgeByGender(List<Employee> emps){
@@ -112,7 +113,8 @@ public class Java8Operations {
 	}
 	
 	static private double sumOfAllSalaries(List<Employee> emps) {
-		return emps.stream().mapToDouble(e -> e.getSalary()).sum();
+//		return emps.stream().mapToDouble(e -> e.getSalary()).sum();
+		return emps.stream().mapToDouble(x -> x.getSalary()).sum();
 	}
 	
 	static private Employee OldestEmployee(List<Employee> emps) {
@@ -142,13 +144,18 @@ public class Java8Operations {
 		return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
 	}
 	
-	static private Entry<Double, List<String>> findNthHighestSalary(List<Employee> emps, int n){
+	static private Entry<Double, List<Employee>> findNthHighestSalary(List<Employee> emps, int n){
 //		first group emps by their salaries, becuase there mayt be emps with same salaries.
 //		below map stores all the unique salaries with list of emps;
 		Map<Double, List<String>> map = emps.stream().collect(Collectors.groupingBy(Employee::getSalary, Collectors.mapping(Employee::getFirstName, Collectors.toList())));
 		List<Entry<Double, List<String>>> collect = map.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByKey())).collect(Collectors.toList());
 //		System.out.println(collect);
-		return collect.get(n-1);
+		return emps.stream().collect(Collectors.groupingBy(e -> e.getSalary(), Collectors.toList()))
+				.entrySet().stream()
+				.sorted((a, b) -> (int)(b.getKey() - a.getKey()))
+				.skip(n-1)
+				.limit(1).iterator().next();
+//		return collect.get(n-1);
 	}
 	
 	static private Map<Character, Long> countOfEachCharacter(String s){
@@ -238,11 +245,16 @@ public class Java8Operations {
 //		One more simple way
 //		return (int) Arrays.stream(arr).boxed().sorted(Comparator.reverseOrder()).skip(1).limit(1).toArray()[0];
 //		One more way
-		return Arrays.stream(arr).boxed().sorted(Comparator.reverseOrder()).skip(1).findFirst().get();
+//		return Arrays.stream(arr).boxed().sorted(Comparator.reverseOrder()).skip(1).findFirst().get();
+//		if array has duplicates
+		return (int)Arrays.stream(arr).boxed().distinct().sorted(Comparator.reverseOrder()).skip(1).limit(1).toArray()[0];
 	}
 	
 	private static String findStringWithGreatestLength(String[] strArr) {
-		return Arrays.stream(strArr).reduce((s1, s2) -> s2.length() > s1.length()? s2: s1).get();
+//		return Arrays.stream(strArr).reduce((s1, s2) -> s2.length() > s1.length()? s2: s1).get();
+//		if input array has elements with same length:
+		return Arrays.stream(strArr).collect(Collectors.groupingBy(String::length, Collectors.toList())).entrySet()
+				.stream().sorted(Collections.reverseOrder(Map.Entry.comparingByKey())).collect(Collectors.toList()).get(0).getValue().get(0);
 	}
 	
 	private static List<String> findAllElementsWhichStartsWith1InAnArray(int[] arr) {
@@ -319,6 +331,11 @@ public class Java8Operations {
 				.filter(x -> Collections.frequency(l1, x) > 1)
 				.collect(Collectors.groupingBy
 						(Function.identity(), Collectors.counting()));
+		//other simple way
+//		return l1.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).
+//				entrySet().stream()
+//				.filter(x -> x.getValue() > 1)
+//				.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
 	}
 	
 }
