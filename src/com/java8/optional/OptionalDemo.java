@@ -30,18 +30,18 @@ public class OptionalDemo {
         System.out.println(emptyOptional);
 
         /*.of() use only when you're sure that value is not null
-        * if null passed it will throw nullpointer exception*/
+         * if null passed it will throw nullpointer exception*/
 //        Optional<String> optionalOf = Optional.of(customer.getEmail());
 //        System.out.println(optionalOf);
 
         /*Use ofNullable() when not sure if object is null or value is present
-        * it will not throw nullpointer exception*/
+         * it will not throw nullpointer exception*/
         Optional<String> optionalOfNullable = Optional.ofNullable(customer.getEmail());
-        if(optionalOfNullable.isPresent()){
+        if (optionalOfNullable.isPresent()) {
             System.out.println(optionalOfNullable.get());
         }
         /*assigning some default response when null or empty is present in optional*/
-         System.out.println(optionalOfNullable.orElse("default@email.com"));
+        System.out.println(optionalOfNullable.orElse("default@email.com"));
 
 //         System.out.println(optionalOfNullable.orElseThrow(()->new IllegalArgumentException("email not present")));
 

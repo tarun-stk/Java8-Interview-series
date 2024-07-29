@@ -62,11 +62,11 @@ public class Java8Operations {
         System.out.println("getAverageAgeByGender: " + getAverageAgeByGender(emps));
         System.out.println("countEmployeesWithSalaryGreaterThan100000: " + countEmployeesWithSalaryGreaterThan100000(emps));
         System.out.println("sumOfAllSalaries: " + sumOfAllSalaries(emps));
-        System.out.println("OldestEmployee: " + OldestEmployee(emps));
+        System.out.println("OldestEmployee: " + oldestEmployee(emps));
         System.out.println(employeesGroupedByDepartment(emps));
         System.out.println("countOfEmployeesInEachDepartment : " + countOfEmployeesInEachDepartment(emps));
         System.out.println(averageSalaryOfEachDepartment(emps));
-        System.out.println(highestSalaryInEachDepartment(emps));
+        System.out.println("highestSalaryInEachDepartment: " + highestSalaryInEachDepartment(emps));
         System.out.println("findNthHighestSalary: " + findNthHighestSalary(emps, 3));
         System.out.println(countOfEachCharacter("java is awesome"));
         System.out.println(findAllDuplicateCharactersInAGivenString("java is awesome"));
@@ -80,15 +80,51 @@ public class Java8Operations {
         System.out.println(stringJoinExample(Arrays.asList("1", "2", "3", "4")));
         System.out.println(skipFirstAndLastInAList(IntStream.rangeClosed(1, 10)));
         System.out.println(findEvenInAList(new int[]{2, 5, 8, 10, 56, 7, 8, 6, 1, 101, 111, 121, 876}));
-        System.out.println(findFirstElementInList(new ArrayList<String>()));
-        System.out.println(findCountOfElementsInAList(new int[10000]));
         System.out.println(findMaxInAList(Arrays.asList(10, 15, 8, 49, 25, 98, 98, 32, 15)));
         System.out.println(concatenateTwoStreams(Arrays.asList("java", "tech", "spring boot", "microservices", "amazonwebservice"), Arrays.asList("Python", "tech", "Django", "microservices", "amazonwebservice")));
         System.out.println(findOnlyDuplicateStringsWithItsCountFromAList(Arrays.asList("AA", "AB", "ABC", "ABB", "ABCC", "AA")));
         System.out.println("flattenAListOfStringsToCharacters: " + flattenAListOfStringsToCharacters(Arrays.asList("String", "Character", "Integer")));
         System.out.println("flattenAListOfArrays: " + flattenAListOfArrays(List.of(new int[]{1, 2}, new int[]{3, 4})));
         System.out.println("flattenAListOfStringsWithSpaces: " + flattenAListOfStringsWithSpaces(Arrays.asList("Hello World", "Intelligent person", "He is very good")));
+        System.out.println("findDepartmentWithHighestEmployeeCount: " + findDepartmentWithHighestEmployeeCount());
+        System.out.println("findSecondHighestSalaryInEachDepartment: " + findEmployeeWithSecondHighestSalaryInEachDepartment());
 
+    }
+
+    private static Map<String, Employee> findEmployeeWithSecondHighestSalaryInEachDepartment() {
+        return emps.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment, Collectors.toList()))
+                .entrySet().stream()
+                .flatMap(x ->
+                        x.getValue()
+                                .stream()
+//                                .sorted(Collections.reverseOrder(Comparator.comparingDouble(Employee::getSalary)))
+                                .sorted((a, b) -> Double.compare(b.getSalary(), a.getSalary()))
+                                .skip(1)
+                                .limit(1)
+                )
+                .collect(Collectors.toMap(Employee::getDepartment, x -> x));
+    }
+
+    private static String findDepartmentWithHighestEmployeeCount() {
+//        return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.counting()))
+//                .entrySet().stream()
+//                .sorted(Collections.reverseOrder(Entry.comparingByValue()))
+//                .map(Entry::getKey)
+//                .findFirst()
+//                .get();
+        /*Above uses sorting, but dont need actually*/
+//        return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.counting()))
+//                .entrySet().stream()
+//                .max((a, b) -> Long.compare(a.getValue(), b.getValue()))
+//                .map(Entry::getKey)
+//                .get();
+        /*Other way*/
+        return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Entry::getKey)
+                .get();
     }
 
     private static List<String> flattenAListOfStringsWithSpaces(List<String> list) {
@@ -152,7 +188,7 @@ public class Java8Operations {
 //		return emps.stream().mapToDouble(x -> x.getSalary()).sum();
     }
 
-    static private Employee OldestEmployee(List<Employee> emps) {
+    static private Employee oldestEmployee(List<Employee> emps) {
 //		return (Employee) emps.stream().sorted(Comparator.comparingInt(Employee::getAge)).limit(1);
 //		return emps.stream().reduce((e1, e2) -> e2.getAge() > e1.getAge()? e2: e1).get();
         return (Employee) emps.stream().collect(Collectors.maxBy(Comparator.comparingInt(Employee::getAge))).get();
@@ -180,7 +216,9 @@ public class Java8Operations {
     }
 
     static private Map<String, Optional<Employee>> highestSalaryInEachDepartment(List<Employee> emps) {
-        return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
+//        return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
+        /*using lamdba*/
+        return emps.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy((a, b) -> (int) (a.getSalary()-b.getSalary()))));
     }
 
     static private Map<Double, List<Employee>> findNthHighestSalary(List<Employee> emps, int n) {
@@ -332,16 +370,6 @@ public class Java8Operations {
 //		.limit(8)
 //		.forEach(System.out::print);
         return stream.mapToObj(x -> (int) x).skip(1).limit(8).collect(toList());
-    }
-
-    private static Optional<String> findFirstElementInList(List<String> list) {
-        Optional<String> out = list.stream().findFirst();
-        return out;
-    }
-
-    private static long findCountOfElementsInAList(int[] arr) {
-        return Arrays.stream(arr)
-                .count();
     }
 
     private static long findMaxInAList(List<Integer> list) {
