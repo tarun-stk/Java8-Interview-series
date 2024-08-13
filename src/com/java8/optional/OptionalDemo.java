@@ -32,7 +32,11 @@ public class OptionalDemo {
         /*.of() use only when you're sure that value is not null
          * if null passed it will throw nullpointer exception*/
 //        Optional<String> optionalOf = Optional.of(customer.getEmail());
-//        System.out.println(optionalOf);
+        /*below throws nullponiterexc, because we put null in optional*/
+        /*if(optionalOf.isPresent()){
+            System.out.println(optionalOf);
+        }*/
+
 
         /*Use ofNullable() when not sure if object is null or value is present
          * it will not throw nullpointer exception*/
